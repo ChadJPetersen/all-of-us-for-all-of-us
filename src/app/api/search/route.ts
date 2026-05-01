@@ -8,15 +8,6 @@ import type {
 } from "@/lib/types";
 import { NextRequest, NextResponse } from "next/server";
 
-/** Re-export search types for consumers that import from the route. */
-export type {
-	SearchOrganizationHit,
-	SearchCalendarHit,
-	SearchResourceHit,
-	SearchVolunteerHit,
-} from "@/lib/types";
-export type { SearchHit } from "@/lib/types";
-
 /**
  * GET /api/search?q=...
  * Searches organizations (name), calendars (org name for orgs with calendar links),

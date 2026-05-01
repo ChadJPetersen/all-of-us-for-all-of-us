@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { guidingPrincipleTexts } from "@/lib/guidingPrinciples";
 
 export const metadata: Metadata = {
 	title: "Mission & Guiding Principles | All of Us For All of Us",
@@ -8,20 +9,7 @@ export const metadata: Metadata = {
 
 const MISSION_STATEMENT = `Envision and create a welcoming, embodied community and culture in which we want to live, where the dignity, joy, and well-being of all people, and future generations, is the primary goal, such that people can thrive and become their best authentic selves.`;
 
-const GUIDING_PRINCIPLES = [
-	"Community-focused/centered",
-	"Council leadership approach (there is no \"I\" in team)",
-	"Non-partisan",
-	"Understand this is long-term, ongoing work",
-	"Perfection is the enemy of the good",
-	"Action grounded in and informed by knowledge/research/facts",
-	"An approach based on a mindset of abundance, focused on our shared humanity and well-being, centered on openness, learning, growth, and creativity",
-	"A recognition of our shared interdependence with each other and our environment, grounded in an understanding of, and focus on, the systems within which we operate and the necessity for such systems to be accessible, supportive, and designed to engender health and well-being and improve the human condition for all individuals and the communities of which they are a part",
-	"A belief that all can contribute positively to the common good, learn from each other, and should be welcomed in and empowered to make their unique positive contribution(s)",
-	"A commitment to ethical, respectful engagement, grounded in thoughtful listening and based on the idea of principled struggle",
-	"A belief in the inherent value, dignity, and worth of ALL human beings and a society that should be structured to provide the most good to all",
-	"The goal is a grassroots democracy that is truly responsive to the needs of the people",
-];
+const GUIDING_PRINCIPLES = [...guidingPrincipleTexts()];
 
 export default function PrinciplesPage() {
 	return (

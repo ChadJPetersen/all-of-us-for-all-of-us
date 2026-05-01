@@ -4,7 +4,6 @@ import type { OrganizationResource } from "@/lib/types";
 import { parseLimitParam, parseOffsetParam } from "@/lib/pagination";
 import {
 	requirePositiveInt,
-	requirePositiveIntInRange,
 	requireNonEmptyString,
 	parseOptionalString,
 	parseOptionalUrl,
@@ -106,7 +105,7 @@ export async function POST(request: NextRequest) {
 		if (orgIdResult.errorResponse) return orgIdResult.errorResponse;
 		const organizationId = orgIdResult.value;
 
-		const typeIdResult = requirePositiveIntInRange(body, "resource_type_id", 1, 5, "Resource type must be between 1 and 5");
+		const typeIdResult = requirePositiveInt(body, "resource_type_id", "Valid resource_type_id is required");
 		if (typeIdResult.errorResponse) return typeIdResult.errorResponse;
 		const resourceTypeId = typeIdResult.value;
 
@@ -120,6 +119,13 @@ export async function POST(request: NextRequest) {
 		const link = linkResult.value;
 
 		const db = getDb();
+		const typeRow = await db
+			.prepare("SELECT 1 AS ok FROM resource_types WHERE id = ? LIMIT 1")
+			.bind(resourceTypeId)
+			.first();
+		if (!typeRow) {
+			return NextResponse.json({ error: "Unknown resource_type_id" }, { status: 400 });
+		}
 		const result = await db
 			.prepare(
 				`INSERT INTO organization_resources (organization_id, resource_type_id, title, description, link)

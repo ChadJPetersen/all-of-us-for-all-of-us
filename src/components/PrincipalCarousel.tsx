@@ -1,5 +1,6 @@
 "use client";
 
+import type { GuidingPrincipal } from "@/lib/guidingPrinciples";
 import { useEffect, useState } from "react";
 
 const ROTATE_INTERVAL_MS = 8000;
@@ -75,11 +76,11 @@ const icons: Record<string, React.ReactNode> = {
 	),
 };
 
-export type PrincipalItem = { text: string; icon: keyof typeof icons };
+export type PrincipalItem = GuidingPrincipal;
 
 export default function PrincipalCarousel({
 	principals,
-}: { principals: readonly PrincipalItem[] }) {
+}: { principals: readonly GuidingPrincipal[] }) {
 	const [index, setIndex] = useState(0);
 
 	useEffect(() => {

@@ -12,7 +12,21 @@
 	--color-foreground: var(--foreground);
 	--font-sans: var(--font-caveat), cursive;
 	--font-mono: var(--font-geist-mono);
-	--font-script: var(--font-dancing-script);
+
+	/* ~12.5% larger than Tailwind defaults; line-height ratios unchanged so leading scales with type */
+	--text-xs: 0.84375rem;
+	--text-sm: 0.984375rem;
+	--text-base: 1.125rem;
+	--text-lg: 1.265625rem;
+	--text-xl: 1.40625rem;
+	--text-2xl: 1.6875rem;
+	--text-3xl: 2.109375rem;
+	--text-4xl: 2.53125rem;
+	--text-5xl: 3.375rem;
+	--text-6xl: 4.21875rem;
+	--text-7xl: 5.0625rem;
+	--text-8xl: 6.75rem;
+	--text-9xl: 9rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -26,6 +40,8 @@ body {
 	background: var(--background);
 	color: var(--foreground);
 	font-family: var(--font-caveat), cursive;
+	font-size: var(--text-base);
+	line-height: var(--text-base--line-height);
 }
 
 /* Footer quote: use Dancing Script with fallback so the variable always resolves */

@@ -15,7 +15,7 @@ interface QuiltSquareProps {
 	initiallyMuted?: boolean;
 	titleOverlayClassName?: string;
 	priority?: boolean;
-	children: React.ReactNode;
+	children?: React.ReactNode | null;
 }
 
 // Grid span class mapping for Tailwind
@@ -59,7 +59,7 @@ export default function QuiltSquare({
 	mediaFit = "cover",
 	showAudioToggle = true,
 	initiallyMuted = true,
-	titleOverlayClassName = "bg-black/40",
+	titleOverlayClassName = "",
 	priority = false,
 	children,
 }: QuiltSquareProps) {
@@ -93,7 +93,7 @@ export default function QuiltSquare({
 
 	return (
 		<div
-			className={`${colSpan} ${rowSpan} ${backgroundClassName} relative flex min-h-[100px] h-full flex-col overflow-hidden rounded-lg`}
+			className={`${colSpan} ${rowSpan} ${backgroundClassName} relative flex min-h-[100px] h-full cursor-pointer flex-col overflow-hidden rounded-lg`}
 			role="group"
 			aria-labelledby={title ? titleId : undefined}
 		>
@@ -141,7 +141,7 @@ export default function QuiltSquare({
 				{title ? (
 					<h3
 						id={titleId}
-						className={`text-xl font-bold text-white drop-shadow-lg [text-shadow:0_1px_3px_rgba(0,0,0,0.45)] ${titleOverlayClassName} rounded-md px-3 py-1`}
+						className={`text-xl font-bold text-white drop-shadow-lg [text-shadow:0_1px_3px_rgba(0,0,0,0.45)]${titleOverlayClassName ? ` ${titleOverlayClassName}` : ""}`}
 					>
 						{title}
 					</h3>

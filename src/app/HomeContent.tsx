@@ -6,23 +6,11 @@ import PrincipalCarousel from "@/components/PrincipalCarousel";
 import QuiltSection from "@/components/QuiltSection";
 import QuiltSquare from "@/components/QuiltSquare";
 import { VirtualizedInfiniteList } from "@/components/VirtualizedInfiniteList";
+import { GUIDING_PRINCIPALS } from "@/lib/guidingPrinciples";
 import { DEFAULT_PAGE_SIZE } from "@/lib/pagination";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-const PRINCIPALS = [
-	{ text: "Community-focused/centered", icon: "users" as const },
-	{ text: "Council leadership approach (there is no \"I\" in team)", icon: "handshake" as const },
-	{ text: "Non-partisan", icon: "scale" as const },
-	{ text: "Understand this is long-term, ongoing work", icon: "clock" as const },
-	{ text: "Perfection is the enemy of the good", icon: "target" as const },
-	{ text: "Action grounded in and informed by knowledge/research/facts", icon: "bookOpen" as const },
-	{ text: "An approach based on a mindset of abundance, focused on our shared humanity and well-being, centered on openness, learning, growth, and creativity", icon: "sparkles" as const },
-	{ text: "A recognition of our shared interdependence with each other and our environment, grounded in an understanding of, and focus on, the systems within which we operate and the necessity for such systems to be accessible, supportive, and designed to engender health and well-being and improve the human condition for all individuals and the communities of which they are a part", icon: "globe" as const },
-	{ text: "A belief that all can contribute positively to the common good, learn from each other, and should be welcomed in and empowered to make their unique positive contribution(s)", icon: "heartHandshake" as const },
-	{ text: "A commitment to ethical, respectful engagement, grounded in thoughtful listening and based on the idea of principled struggle", icon: "messageCircle" as const },
-	{ text: "A belief in the inherent value, dignity, and worth of ALL human beings and a society that should be structured to provide the most good to all", icon: "heart" as const },
-	{ text: "The goal is a grassroots democracy that is truly responsive to the needs of the people", icon: "landmark" as const },
-];
+const RESOURCE_COLORS = ["bg-rose-500", "bg-violet-500", "bg-indigo-500", "bg-sky-500", "bg-amber-500"];
 
 interface NearbyOrg {
 	id: number;
@@ -96,7 +84,10 @@ export default function HomeContent() {
 				setNearbyOrgs((prev) => [...prev, ...list]);
 			}
 		} catch {
-			if (offset === 0) setNearbyOrgs([]);
+			if (offset === 0) {
+				setNearbyOrgs([]);
+				setNearbyTotalCount(0);
+			}
 		} finally {
 			setNearbyLoading(false);
 		}
@@ -164,8 +155,7 @@ export default function HomeContent() {
 		}
 	}, [selectedResourceTypeId, fetchResourcesByType]);
 
-	// Group resources by organization for display
-	const resourcesByOrg = (() => {
+	const resourcesByOrg = useMemo(() => {
 		const map = new Map<number, { name: string; resources: ResourceItem[] }>();
 		for (const r of resourcesByType) {
 			const existing = map.get(r.organization_id);
@@ -176,13 +166,11 @@ export default function HomeContent() {
 			}
 		}
 		return Array.from(map.entries()).map(([id, { name, resources }]) => ({ organization_id: id, name, resources }));
-	})();
+	}, [resourcesByType]);
 
 	const selectedTypeLabel = selectedResourceTypeId != null
 		? resourceTypes.find((t) => t.id === selectedResourceTypeId)?.label ?? "Resources"
 		: null;
-
-	const RESOURCE_COLORS = ["bg-rose-500", "bg-violet-500", "bg-indigo-500", "bg-sky-500", "bg-amber-500"];
 
 	return (
 		<div className="min-h-screen flex flex-col">
@@ -277,7 +265,7 @@ export default function HomeContent() {
 								aria-label="View Beloved Community mission statement and guiding principles"
 							>
 								<div className="flex-1 min-h-0 flex items-center justify-center">
-									<PrincipalCarousel principals={PRINCIPALS} />
+									<PrincipalCarousel principals={GUIDING_PRINCIPALS} />
 								</div>
 								<p className="shrink-0 mt-3 text-center text-sm sm:text-base text-white/90 group-hover:text-white transition-colors">
 									<span className="inline-flex items-center justify-center gap-1.5 font-medium border-b border-dotted border-white/50 group-hover:border-solid group-hover:border-white/90 pb-px">
@@ -319,13 +307,7 @@ export default function HomeContent() {
 												height={3}
 												backgroundClassName={RESOURCE_COLORS[i % RESOURCE_COLORS.length]}
 												mediaFit="fill"
-											>
-												<div className="text-center">
-													<p className="text-lg mb-2 font-medium text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.35)]">
-														{rt.label}
-													</p>
-												</div>
-											</QuiltSquare>
+											/>
 										</button>
 									))
 								)}
@@ -453,9 +435,6 @@ export default function HomeContent() {
 														mediaFit="fill"
 													>
 														<div className="text-center">
-															<p className="text-lg mb-2 font-medium text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.35)]">
-																{org.name}
-															</p>
 															<p className="text-sm text-white/90 [text-shadow:0_1px_2px_rgba(0,0,0,0.3)]">
 																{org.distance_km != null
 																	? `~${(org.distance_km / 1.60934).toFixed(0)} mi away`

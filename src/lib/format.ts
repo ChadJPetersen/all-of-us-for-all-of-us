@@ -79,16 +79,6 @@ export function formatDateTime(iso: string): string {
 	}
 }
 
-/**
- * Convert a datetime-local value (YYYY-MM-DDTHH:mm) to ISO 8601 with timezone (UTC).
- * Use when submitting forms so stored datetimes have an explicit timezone.
- */
-export function toIsoDatetime(localDatetime: string): string {
-	if (!localDatetime || !localDatetime.trim()) return localDatetime;
-	const d = new Date(localDatetime.trim());
-	return Number.isNaN(d.getTime()) ? localDatetime : d.toISOString();
-}
-
 /** Get the user's current timezone offset in minutes (e.g. -420 for UTC-7). */
 export function getCurrentOffsetMinutes(): number {
 	return typeof window !== "undefined" ? -new Date().getTimezoneOffset() : 0;
