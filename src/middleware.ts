@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { checkApiRateLimit, getRateLimitClientKey } from "@/lib/rateLimit";
 
-export function proxy(request: NextRequest) {
+// Edge runtime: OpenNext Cloudflare does not support Node `proxy.ts` (Next 16 default).
+export function middleware(request: NextRequest) {
 	const clientKey = getRateLimitClientKey(request);
 	const result = checkApiRateLimit(clientKey);
 
