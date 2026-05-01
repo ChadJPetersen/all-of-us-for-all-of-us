@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+:root {
+	--background: #ffffff;
+	--foreground: #171717;
+	/* Dancing Script from @fontsource (local), no Google download at build */
+	--font-dancing-script: "Dancing Script", cursive;
+}
+
+@theme inline {
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--font-sans: var(--font-caveat), cursive;
+	--font-mono: var(--font-geist-mono);
+	--font-script: var(--font-dancing-script);
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--background: #0a0a0a;
+		--foreground: #ededed;
+	}
+}
+
+body {
+	background: var(--background);
+	color: var(--foreground);
+	font-family: var(--font-caveat), cursive;
+}
+
+/* Footer quote: use Dancing Script with fallback so the variable always resolves */
+.font-script-quote {
+	font-family: var(--font-dancing-script), cursive;
+}
+
+@keyframes principal-fade-in {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.principal-carousel-enter {
+	animation: principal-fade-in 0.5s ease-out forwards;
+}
+
+/* Respect user preference for reduced motion (accessibility) */
+@media (prefers-reduced-motion: reduce) {
+	.principal-carousel-enter {
+		animation: none;
+	}
+}
+
+/* Hide default disclosure triangle on collapsible sections */
+details summary::-webkit-details-marker {
+	display: none;
+}
+details summary::marker {
+	content: none;
+}
+
+/* Location area AsyncSelect: match site colors and ensure readable text */
+.location-area-select .location-area__singleValue,
+.location-area-select .location-area__input {
+	color: var(--foreground) !important;
+}
+.location-area-select .location-area__control {
+	background-color: var(--background) !important;
+}
+.location-area-select .location-area__menu {
+	background-color: var(--background) !important;
+}
+.location-area-select .location-area__option {
+	color: var(--foreground) !important;
+}
+@media (prefers-color-scheme: dark) {
+	.location-area-select .location-area__singleValue,
+	.location-area-select .location-area__input {
+		color: #ffffff !important;
+	}
+	.location-area-select .location-area__control {
+		background-color: #1e293b !important;
+	}
+	.location-area-select .location-area__menu {
+		background-color: #1e293b !important;
+	}
+	.location-area-select .location-area__option {
+		color: #f1f5f9 !important;
+	}
+	.location-area-select .location-area__option--is-focused {
+		background-color: #334155 !important;
+	}
+}

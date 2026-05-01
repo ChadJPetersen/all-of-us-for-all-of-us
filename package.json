@@ -1,0 +1,45 @@
+{
+  "name": "next",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts",
+    "update-zip-names": "node scripts/update-zip-names-in-migration.js"
+  },
+  "dependencies": {
+    "@fontsource/dancing-script": "^5.2.8",
+    "@fullcalendar/core": "^6.1.20",
+    "@fullcalendar/daygrid": "^6.1.20",
+    "@fullcalendar/list": "^6.1.20",
+    "@fullcalendar/react": "^6.1.20",
+    "@fullcalendar/timegrid": "^6.1.20",
+    "@opennextjs/cloudflare": "^1.17.1",
+    "@tanstack/react-virtual": "^3.13.21",
+    "next": "16.1.6",
+    "node-ical": "^0.25.5",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-select": "^5.10.2"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.5",
+    "@tailwindcss/postcss": "^4.2.1",
+    "@types/node": "^25.4.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^10.0.3",
+    "eslint-config-next": "16.1.6",
+    "tailwindcss": "^4.2.1",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.71.0",
+    "zipcodes": "^8.0.0"
+  },
+  "packageManager": "pnpm@10.32.0+sha512.9b2634bb3fed5601c33633f2d92593f506270a3963b8c51d2b2d6a828da615ce4e9deebef9614ccebbc13ac8d3c0f9c9ccceb583c69c8578436fa477dbb20d70"
+}
