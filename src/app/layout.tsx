@@ -18,9 +18,15 @@ const geistMono = Geist_Mono({
 	subsets: ["latin"],
 });
 
+const faviconHash = process.env.NEXT_PUBLIC_FAVICON_HASH;
+const faviconUrl = faviconHash ? `/favicon.svg?v=${faviconHash}` : "/favicon.svg";
+
 export const metadata: Metadata = {
 	title: "All of Us For All of Us",
 	description: "Building community as though the revolution already happened.",
+	icons: {
+		icon: [{ url: faviconUrl, type: "image/svg+xml" }],
+	},
 };
 
 export default function RootLayout({
@@ -30,9 +36,6 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<head>
-				<link rel="icon" href="/favicon.svg" type="image/svg+xml"></link>
-			</head>
 			<body className={`${caveat.variable} ${geistMono.variable} font-sans antialiased`}>
 			<a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-teal-500 focus:text-white focus:rounded-lg">
 				Skip to main content

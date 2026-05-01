@@ -19,7 +19,7 @@ A community-focused web app for the *Beloved Community* initiative: discover org
 ### Home
 
 - **What We Do** — Quilt-style links to Calendar, Resources, and Get Involved / Volunteer.
-- **Who Are We** — Intro video and rotating carousel of guiding principles (with link to full Mission & Guiding Principles page).
+- **Who We Are** — Intro video and rotating carousel of guiding principles (with link to full Mission & Guiding Principles page).
 - **Resources by category** — Pick a resource type to see organizations and their resources in that category.
 - **Organizations near you** — Location-based list (ZIP or “Use my location” + radius). Virtualized infinite list; “Add your organization” links to the Organizations page.
 
@@ -110,6 +110,27 @@ pnpm dev
 ```
 
 Runs Next.js with Turbopack at [http://localhost:3000](http://localhost:3000).
+
+**WSL and hot reload:** If you run `pnpm dev` inside WSL but the repo lives on the Windows filesystem (`/mnt/c/...`), file watchers often miss saves and Turbopack will not recompile. Either clone the repo under the Linux home tree (for example `~/projects/...`) so paths are on the ext4 volume, or enable polling:
+
+```bash
+pnpm dev:wsl
+```
+
+That sets `NEXT_DEV_POLL_INTERVAL_MS=1000` (see `next.config.ts`). You can also run `NEXT_DEV_POLL_INTERVAL_MS=1000 pnpm dev` or put the same variable in `.env.development.local`.
+
+### PowerShell and WSL on the same clone (Windows)
+
+You can mix shells on **one repo** (for example `C:\Users\you\...\all-of-us-for-all-of-us` in PowerShell and `/mnt/c/Users/you/.../all-of-us-for-all-of-us` in WSL).
+
+| Task | Suggested shell |
+|------|-----------------|
+| **`pnpm dev`** (Turbopack, hot reload) | **PowerShell** — saves on the Windows drive are watched reliably. |
+| **`pnpm deploy`**, **`pnpm upload`**, **`pnpm preview`**, **`pnpx wrangler ...`** | **WSL** — OpenNext and Wrangler often match CI (Linux) and avoid Windows-specific tooling issues. |
+
+**`node_modules`:** Windows Node and WSL’s Linux Node install different platform binaries (for example esbuild). If you switch shells and commands start failing with missing or wrong native modules, run **`pnpm install` again in the shell you are about to use** before that session’s work.
+
+Do not run **two `pnpm dev` instances** on the same machine for the same app (they will fight over port 3000).
 
 ### Build & deploy (Cloudflare)
 

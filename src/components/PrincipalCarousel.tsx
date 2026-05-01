@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 const ROTATE_INTERVAL_MS = 8000;
 
-const iconClass = "w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 text-white/95 drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] flex-shrink-0";
+const iconClass = "w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 text-purple-300 drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] flex-shrink-0";
 
 const icons: Record<string, React.ReactNode> = {
 	users: (
@@ -106,7 +106,7 @@ export default function PrincipalCarousel({
 				aria-atomic="true"
 			>
 				{icon}
-				<p className="text-white text-base sm:text-lg md:text-xl lg:text-2xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] text-center">
+				<p className="text-purple-300 text-base sm:text-lg md:text-xl lg:text-2xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] text-center">
 					{item?.text ?? ""}
 				</p>
 			</div>

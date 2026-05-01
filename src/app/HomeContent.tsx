@@ -195,7 +195,10 @@ export default function HomeContent() {
 						contentClassName="pb-0"
 						gridClassName="auto-rows-[minmax(65px,auto)]"
 					>
-						<Link href="/calendar" className="block h-full min-h-[65px] col-span-4 row-span-3">
+						<Link
+							href="/calendar"
+							className="block h-full min-h-[65px] col-span-4 row-span-3 rounded-lg transition-[box-shadow] duration-300 hover:shadow-[0_0_28px_rgba(20,184,166,0.45)] focus-visible:outline-none focus-visible:shadow-[0_0_32px_rgba(20,184,166,0.55)] focus-visible:ring-2 focus-visible:ring-teal-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+						>
 							<QuiltSquare
 								image="/stitching.svg"
 								title="Calendar"
@@ -205,15 +208,17 @@ export default function HomeContent() {
 								mediaFit="fill"
 								priority
 							>
-								<div className="text-center">
-									<p className="text-lg mb-2">Calendar</p>
-									<p className="text-sm text-gray-600">
+								<div className="text-center px-1">
+									<p className="text-sm text-white/95 [text-shadow:0_1px_2px_rgba(0,0,0,0.35)]">
 										Events, meetings, and important dates.
 									</p>
 								</div>
 							</QuiltSquare>
 						</Link>
-						<Link href="/resources" className="block h-full min-h-[65px] col-span-4 row-span-3">
+						<Link
+							href="/resources"
+							className="block h-full min-h-[65px] col-span-4 row-span-3 rounded-lg transition-[box-shadow] duration-300 hover:shadow-[0_0_28px_rgba(244,63,94,0.45)] focus-visible:outline-none focus-visible:shadow-[0_0_32px_rgba(244,63,94,0.55)] focus-visible:ring-2 focus-visible:ring-rose-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+						>
 							<QuiltSquare
 								image="/stitching.svg"
 								title="Resources"
@@ -222,15 +227,17 @@ export default function HomeContent() {
 								backgroundClassName="bg-rose-500"
 								mediaFit="fill"
 							>
-								<div className="text-center">
-									<p className="text-lg mb-2">Resources</p>
-									<p className="text-sm text-gray-600">
+								<div className="text-center px-1">
+									<p className="text-sm text-white/95 [text-shadow:0_1px_2px_rgba(0,0,0,0.35)]">
 										Help, art & music, education, news, and more by type.
 									</p>
 								</div>
 							</QuiltSquare>
 						</Link>
-						<Link href="/volunteer" className="block h-full min-h-[65px] col-span-4 row-span-3">
+						<Link
+							href="/volunteer"
+							className="block h-full min-h-[65px] col-span-4 row-span-3 rounded-lg transition-[box-shadow] duration-300 hover:shadow-[0_0_28px_rgba(245,158,11,0.5)] focus-visible:outline-none focus-visible:shadow-[0_0_32px_rgba(245,158,11,0.6)] focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+						>
 							<QuiltSquare
 								image="/stitching.svg"
 								title="Get Involved / Volunteer"
@@ -239,9 +246,8 @@ export default function HomeContent() {
 								backgroundClassName="bg-amber-500"
 								mediaFit="fill"
 							>
-								<div className="text-center">
-									<p className="text-lg mb-2">Get Involved / Volunteer</p>
-									<p className="text-sm text-gray-600">
+								<div className="text-center px-1">
+									<p className="text-sm text-white/95 [text-shadow:0_1px_2px_rgba(0,0,0,0.35)]">
 										Take action and find volunteer opportunities.
 									</p>
 								</div>
@@ -249,19 +255,40 @@ export default function HomeContent() {
 						</Link>
 					</QuiltSection>
 
-					<QuiltSection title="Who Are We?" defaultOpen>
+					<QuiltSection
+						title="Who We Are"
+						defaultOpen
+						action={
+							<Link
+								href="/principles"
+								className="inline-flex items-center rounded-lg bg-violet-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 focus:ring-offset-slate-900"
+							>
+								Guiding principles
+							</Link>
+						}
+					>
 						<div className="col-span-12 h-[80vh] grid grid-cols-12 gap-4 min-h-0">
 							<div className="col-span-12 md:col-span-8 min-h-0 rounded-lg overflow-hidden">
 								<HeaderVideo />
 							</div>
 							<Link
 								href="/principles"
-								className="col-span-12 md:col-span-4 min-h-0 flex items-center justify-center rounded-lg bg-black/20 p-4 sm:p-6 hover:bg-black/30 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-2 focus:ring-offset-slate-900"
+								className="group col-span-12 md:col-span-4 min-h-0 flex flex-col rounded-lg bg-black/20 p-4 sm:p-6 hover:bg-black/30 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-2 focus:ring-offset-slate-900"
 								aria-label="View Beloved Community mission statement and guiding principles"
 							>
-								<PrincipalCarousel principals={PRINCIPALS} />
+								<div className="flex-1 min-h-0 flex items-center justify-center">
+									<PrincipalCarousel principals={PRINCIPALS} />
+								</div>
+								<p className="shrink-0 mt-3 text-center text-sm sm:text-base text-white/90 group-hover:text-white transition-colors">
+									<span className="inline-flex items-center justify-center gap-1.5 font-medium border-b border-dotted border-white/50 group-hover:border-solid group-hover:border-white/90 pb-px">
+										View all principles
+										<span aria-hidden className="translate-x-0 group-hover:translate-x-0.5 transition-transform">
+											→
+										</span>
+									</span>
+								</p>
 							</Link>
-						</div>
+						</div> 
 					</QuiltSection>
 
 					{/* Resources by category: click a type to see orgs with resources of that type */}
@@ -294,9 +321,8 @@ export default function HomeContent() {
 												mediaFit="fill"
 											>
 												<div className="text-center">
-													<p className="text-lg mb-2">{rt.label}</p>
-													<p className="text-sm text-gray-600">
-														Click to see organizations and resources
+													<p className="text-lg mb-2 font-medium text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.35)]">
+														{rt.label}
 													</p>
 												</div>
 											</QuiltSquare>
@@ -427,8 +453,10 @@ export default function HomeContent() {
 														mediaFit="fill"
 													>
 														<div className="text-center">
-															<p className="text-lg mb-2">{org.name}</p>
-															<p className="text-sm text-gray-600">
+															<p className="text-lg mb-2 font-medium text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.35)]">
+																{org.name}
+															</p>
+															<p className="text-sm text-white/90 [text-shadow:0_1px_2px_rgba(0,0,0,0.3)]">
 																{org.distance_km != null
 																	? `~${(org.distance_km / 1.60934).toFixed(0)} mi away`
 																	: "View on organizations page"}
@@ -447,7 +475,7 @@ export default function HomeContent() {
 			</main>
 
 			<footer className="py-8 px-4 text-center" role="contentinfo">
-				<p className="mt-2 text-lg sm:text-xl md:text-2xl text-white/95 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] font-medium">
+				<p className="mt-2 text-lg sm:text-xl md:text-2xl text-purple-300 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] font-medium">
 					Building community as though the revolution already happened
 				</p>
 			</footer>

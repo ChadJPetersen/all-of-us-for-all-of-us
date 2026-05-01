@@ -13,7 +13,6 @@ interface QuiltSquareProps {
 	mediaFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
 	showAudioToggle?: boolean;
 	initiallyMuted?: boolean;
-	showTitleOverlay?: boolean;
 	titleOverlayClassName?: string;
 	priority?: boolean;
 	children: React.ReactNode;
@@ -60,22 +59,18 @@ export default function QuiltSquare({
 	mediaFit = "cover",
 	showAudioToggle = true,
 	initiallyMuted = true,
-	showTitleOverlay = true,
 	titleOverlayClassName = "bg-black/40",
 	priority = false,
 	children,
 }: QuiltSquareProps) {
-	const [isHovered, setIsHovered] = useState(false);
 	const [isMuted, setIsMuted] = useState(initiallyMuted);
 	const videoRef = useRef<HTMLVideoElement | null>(null);
 	const id = useId().replace(/:/g, "");
 	const titleId = `quilt-title-${id}`;
 
-	// Validate height and width are between 1-12
 	const validHeight = Math.max(1, Math.min(12, height));
 	const validWidth = Math.max(1, Math.min(12, width));
 
-	// Get grid span classes
 	const colSpan = colSpanClasses[validWidth] || "col-span-1";
 	const rowSpan = rowSpanClasses[validHeight] || "row-span-1";
 
@@ -91,75 +86,47 @@ export default function QuiltSquare({
 						: "object-cover";
 
 	useEffect(() => {
-		// Keep the actual element in sync with React state.
 		if (videoRef.current) videoRef.current.muted = isMuted;
 	}, [isMuted]);
 
+	const decorativeImage = Boolean(image || video);
+
 	return (
 		<div
-			className={`${colSpan} ${rowSpan} ${backgroundClassName} relative overflow-hidden rounded-lg cursor-pointer transition-all duration-300 ease-in-out min-h-[100px] h-full`}
-			onMouseEnter={() => setIsHovered(true)}
-			onMouseLeave={() => setIsHovered(false)}
+			className={`${colSpan} ${rowSpan} ${backgroundClassName} relative flex min-h-[100px] h-full flex-col overflow-hidden rounded-lg`}
 			role="group"
 			aria-labelledby={title ? titleId : undefined}
 		>
-			{/* Background Image/Video */}
-			<div
-				className={`absolute inset-0 transition-opacity duration-300 ${
-					isHovered ? "opacity-0" : "opacity-100"
-				}`}
-			>
-				{video ? (
-					<>
+			{decorativeImage ? (
+				<div className="pointer-events-none absolute inset-0 overflow-hidden">
+					{video ? (
 						<video
 							ref={videoRef}
 							src={video}
-							className={`w-full h-full ${mediaFitClassName}`}
+							className={`h-full w-full ${mediaFitClassName}`}
 							autoPlay
 							loop
 							muted={isMuted}
 							playsInline
 						/>
-					</>
-				) : image ? (
-					<Image
-						src={image}
-						alt={title}
-						fill
-						className={mediaFitClassName}
-						sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-						priority={priority}
-						unoptimized={priority}
-					/>
-				) : (
-					<div className={`w-full h-full ${backgroundClassName}`} />
-				)}
-				{/* Title Overlay */}
-				{showTitleOverlay ? (
-					<div
-						className={`absolute inset-0 ${titleOverlayClassName} flex items-center justify-center`}
-					>
-						<h3 id={title ? titleId : undefined} className="text-white text-xl font-bold text-center px-4 drop-shadow-lg">
-							{title}
-						</h3>
-					</div>
-				) : null}
-			</div>
+					) : (
+						<Image
+							src={image!}
+							alt=""
+							fill
+							className={mediaFitClassName}
+							sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+							priority={priority}
+							unoptimized={priority}
+						/>
+					)}
+				</div>
+			) : null}
 
-			{/* Children Content (shown on hover) */}
-			<div
-				className={`absolute inset-0 transition-opacity duration-300 ${
-					isHovered ? "opacity-100" : "opacity-0"
-				} bg-white/95 p-4 flex items-center justify-center overflow-auto`}
-			>
-				{children}
-			</div>
-
-			{/* Audio toggle (kept above both layers so it's always clickable) */}
 			{video && showAudioToggle ? (
 				<button
 					type="button"
-					className="absolute top-2 right-2 z-30 rounded-md bg-black/60 px-2 py-1 text-xs font-semibold text-white backdrop-blur transition hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white/70"
+					className="pointer-events-auto absolute top-2 right-2 z-30 rounded-md bg-black/60 px-2 py-1 text-xs font-semibold text-white backdrop-blur transition hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white/70"
 					aria-label={isMuted ? "Unmute video" : "Mute video"}
 					onClick={(e) => {
 						e.stopPropagation();
@@ -169,7 +136,18 @@ export default function QuiltSquare({
 					{isMuted ? "Unmute" : "Mute"}
 				</button>
 			) : null}
+
+			<div className="relative z-10 flex min-h-0 flex-1 flex-col items-center justify-center gap-2 overflow-auto p-3 text-center sm:p-4">
+				{title ? (
+					<h3
+						id={titleId}
+						className={`text-xl font-bold text-white drop-shadow-lg [text-shadow:0_1px_3px_rgba(0,0,0,0.45)] ${titleOverlayClassName} rounded-md px-3 py-1`}
+					>
+						{title}
+					</h3>
+				) : null}
+				{children}
+			</div>
 		</div>
 	);
 }
-
