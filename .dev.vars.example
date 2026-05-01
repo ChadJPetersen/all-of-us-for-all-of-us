@@ -1,2 +1,7 @@
 # Load .env.development* files when running `wrangler dev`
 NEXTJS_ENV=development
+
+# Cloudflare Turnstile (optional — omit both to disable human checks locally)
+# https://developers.cloudflare.com/turnstile/get-started/
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=
+TURNSTILE_SECRET_KEY=

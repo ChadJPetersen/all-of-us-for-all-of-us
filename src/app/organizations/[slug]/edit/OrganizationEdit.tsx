@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import AsyncSelect from "react-select/async";
+import { HumanVerificationProvider, useHumanVerification } from "@/components/HumanVerificationProvider";
 import { usePrefersDark } from "@/lib/hooks";
 import { resizeAndConvertToWebP } from "@/lib/image-utils";
 import type { OrganizationWithVolunteerOpportunities } from "@/lib/types";
@@ -47,7 +48,8 @@ const LOCATION_TYPE_TO_AREA_TYPE: Record<number, number | null> = {
 	4: null,
 };
 
-export default function OrganizationEdit({ slug }: { slug: string }) {
+function OrganizationEditInner({ slug }: { slug: string }) {
+	const { canAddContent, enabled } = useHumanVerification();
 	const router = useRouter();
 	const prefersDark = usePrefersDark();
 	const [org, setOrg] = useState<OrganizationWithVolunteerOpportunities | null>(null);
@@ -379,6 +381,11 @@ export default function OrganizationEdit({ slug }: { slug: string }) {
 								setPhotoUploadStatus("error");
 								return;
 							}
+							if (enabled && !canAddContent) {
+								setPhotoUploadMessage("Please complete the human verification above before uploading.");
+								setPhotoUploadStatus("error");
+								return;
+							}
 							setPhotoUploadStatus("loading");
 							setPhotoUploadMessage("");
 							try {
@@ -388,6 +395,7 @@ export default function OrganizationEdit({ slug }: { slug: string }) {
 								formData.set("file", toUpload);
 								const res = await fetch("/api/upload-organization-photo", {
 									method: "POST",
+									credentials: "same-origin",
 									body: formData,
 								});
 								const data = (await res.json()) as { url?: string; error?: string };
@@ -632,5 +640,13 @@ export default function OrganizationEdit({ slug }: { slug: string }) {
 				</div>
 			</form>
 		</div>
+	);
+}
+
+export default function OrganizationEdit({ slug }: { slug: string }) {
+	return (
+		<HumanVerificationProvider showAddGate>
+			<OrganizationEditInner slug={slug} />
+		</HumanVerificationProvider>
 	);
 }

@@ -14,6 +14,7 @@ import {
 	validateSlotDatetimes,
 } from "@/lib/validation";
 import { isoToUtcAndOffset, utcAndOffsetToIso } from "@/lib/format";
+import { requireAddHumanSession } from "@/lib/humanVerify";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -303,6 +304,8 @@ function getNextStart(vo: VolunteerOpportunityWithOrg): string | null {
  */
 export async function POST(request: NextRequest) {
 	try {
+		const humanBlock = requireAddHumanSession(request);
+		if (humanBlock) return humanBlock;
 		const body = (await request.json()) as Record<string, unknown>;
 		const orgIdResult = requirePositiveInt(body, "organization_id", "Valid organization_id is required");
 		if (orgIdResult.errorResponse) return orgIdResult.errorResponse;

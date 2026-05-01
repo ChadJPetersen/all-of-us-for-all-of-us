@@ -20,6 +20,7 @@ import type {
 	VolunteerOpportunity,
 	OrganizationResource,
 } from "@/lib/types";
+import { requireDeleteHumanVerification } from "@/lib/humanVerify";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -370,6 +371,8 @@ export async function DELETE(
 	{ params }: { params: Promise<{ slug: string }> }
 ) {
 	try {
+		const humanBlock = await requireDeleteHumanVerification(request);
+		if (humanBlock) return humanBlock;
 		const { slug: slugOrId } = await params;
 		if (slugOrId == null || slugOrId === "") {
 			return NextResponse.json({ error: "Invalid organization slug" }, { status: 400 });

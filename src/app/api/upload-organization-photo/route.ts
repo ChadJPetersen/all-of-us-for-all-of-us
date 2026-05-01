@@ -1,3 +1,4 @@
+import { requireAddHumanSession } from "@/lib/humanVerify";
 import { getOrgPhotosBucket, ORG_PHOTOS_PREFIX } from "@/lib/r2";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -22,6 +23,8 @@ function extFromMime(mime: string): string {
  */
 export async function POST(request: NextRequest) {
 	try {
+		const humanBlock = requireAddHumanSession(request);
+		if (humanBlock) return humanBlock;
 		const bucket = getOrgPhotosBucket();
 		const formData = await request.formData();
 		const file = formData.get("file");

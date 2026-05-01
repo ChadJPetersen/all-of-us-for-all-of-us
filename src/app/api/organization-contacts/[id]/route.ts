@@ -1,4 +1,5 @@
 import { getDb } from "@/lib/db";
+import { requireDeleteHumanVerification } from "@/lib/humanVerify";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -6,10 +7,12 @@ import { NextRequest, NextResponse } from "next/server";
  * Deletes an organization contact by id.
  */
 export async function DELETE(
-	_request: NextRequest,
+	request: NextRequest,
 	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
+		const humanBlock = await requireDeleteHumanVerification(request);
+		if (humanBlock) return humanBlock;
 		const { id: idParam } = await params;
 		const id = idParam != null ? parseInt(idParam, 10) : NaN;
 		if (!Number.isInteger(id) || id < 1) {

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import AsyncSelect from "react-select/async";
 import CalendarModal, { isIcalOrWebcalLink } from "@/components/CalendarModal";
+import { HumanVerificationProvider, useHumanVerification } from "@/components/HumanVerificationProvider";
 import { VirtualizedInfiniteList } from "@/components/VirtualizedInfiniteList";
 import { formatDateTime, toIsoDatetimeWithOffset, getCurrentOffsetMinutes, getTimezoneOptions } from "@/lib/format";
 import { usePrefersDark } from "@/lib/hooks";
@@ -68,9 +69,10 @@ const LOCATION_TYPE_TO_AREA_TYPE: Record<number, number | null> = {
 	4: null, // Global -> no area
 };
 
-export default function OrganizationsContent() {
+function OrganizationsContentInner() {
 	const router = useRouter();
 	const prefersDark = usePrefersDark();
+	const { canAddContent, enabled, deleteWithVerification } = useHumanVerification();
 	const [options, setOptions] = useState<FormOptions | null>(null);
 	const [organizations, setOrganizations] = useState<OrganizationWithVolunteerOpportunities[]>([]);
 	const [totalCount, setTotalCount] = useState(0);
@@ -257,6 +259,11 @@ export default function OrganizationsContent() {
 			setSubmitStatus("error");
 			return;
 		}
+		if (enabled && !canAddContent) {
+			setSubmitMessage("Please complete the human verification above before adding an organization.");
+			setSubmitStatus("error");
+			return;
+		}
 		setSubmitStatus("loading");
 		setSubmitMessage("");
 		try {
@@ -315,6 +322,11 @@ export default function OrganizationsContent() {
 		e.preventDefault();
 		if (addVoOrgId == null || !addVoTitle.trim()) {
 			setAddVoMessage("Title is required.");
+			setAddVoStatus("error");
+			return;
+		}
+		if (enabled && !canAddContent) {
+			setAddVoMessage("Please complete the human verification above first.");
 			setAddVoStatus("error");
 			return;
 		}
@@ -403,6 +415,11 @@ export default function OrganizationsContent() {
 			setAddResStatus("error");
 			return;
 		}
+		if (enabled && !canAddContent) {
+			setAddResMessage("Please complete the human verification above first.");
+			setAddResStatus("error");
+			return;
+		}
 		setAddResStatus("loading");
 		setAddResMessage("");
 		try {
@@ -455,6 +472,11 @@ export default function OrganizationsContent() {
 			setAddCalStatus("error");
 			return;
 		}
+		if (enabled && !canAddContent) {
+			setAddCalMessage("Please complete the human verification above first.");
+			setAddCalStatus("error");
+			return;
+		}
 		setAddCalStatus("loading");
 		setAddCalMessage("");
 		try {
@@ -498,7 +520,7 @@ export default function OrganizationsContent() {
 		if (deletingCalLinkId != null) return;
 		setDeletingCalLinkId(linkId);
 		try {
-			const res = await fetch(`/api/organization-calendar-links/${linkId}`, { method: "DELETE" });
+			const res = await deleteWithVerification(`/api/organization-calendar-links/${linkId}`);
 			if (!res.ok) {
 				const data = (await res.json()) as { error?: string };
 				setAddCalMessage(data.error ?? "Failed to delete calendar link.");
@@ -506,8 +528,8 @@ export default function OrganizationsContent() {
 				return;
 			}
 			await fetchOrganizations(includePastOpportunities);
-		} catch {
-			setAddCalMessage("Network error.");
+		} catch (e) {
+			setAddCalMessage(e instanceof Error ? e.message : "Network error.");
 			setAddCalStatus("error");
 		} finally {
 			setDeletingCalLinkId(null);
@@ -518,7 +540,7 @@ export default function OrganizationsContent() {
 		if (deletingVoId != null) return;
 		setDeletingVoId(voId);
 		try {
-			const res = await fetch(`/api/volunteer-opportunities/${voId}`, { method: "DELETE" });
+			const res = await deleteWithVerification(`/api/volunteer-opportunities/${voId}`);
 			if (!res.ok) {
 				const data = (await res.json()) as { error?: string };
 				setAddVoMessage(data.error ?? "Failed to delete opportunity.");
@@ -526,8 +548,8 @@ export default function OrganizationsContent() {
 				return;
 			}
 			await fetchOrganizations(includePastOpportunities);
-		} catch {
-			setAddVoMessage("Network error.");
+		} catch (e) {
+			setAddVoMessage(e instanceof Error ? e.message : "Network error.");
 			setAddVoStatus("error");
 		} finally {
 			setDeletingVoId(null);
@@ -538,7 +560,7 @@ export default function OrganizationsContent() {
 		if (deletingResId != null) return;
 		setDeletingResId(resId);
 		try {
-			const res = await fetch(`/api/resources/${resId}`, { method: "DELETE" });
+			const res = await deleteWithVerification(`/api/resources/${resId}`);
 			if (!res.ok) {
 				const data = (await res.json()) as { error?: string };
 				setAddResMessage(data.error ?? "Failed to delete resource.");
@@ -546,8 +568,8 @@ export default function OrganizationsContent() {
 				return;
 			}
 			await fetchOrganizations(includePastOpportunities);
-		} catch {
-			setAddResMessage("Network error.");
+		} catch (e) {
+			setAddResMessage(e instanceof Error ? e.message : "Network error.");
 			setAddResStatus("error");
 		} finally {
 			setDeletingResId(null);
@@ -560,7 +582,7 @@ export default function OrganizationsContent() {
 		setDeletingOrgId(org.id);
 		try {
 			const slugOrId = org.slug ?? org.id;
-			const res = await fetch(`/api/organizations/${slugOrId}`, { method: "DELETE" });
+			const res = await deleteWithVerification(`/api/organizations/${slugOrId}`);
 			if (!res.ok) {
 				const data = (await res.json()) as { error?: string };
 				setSubmitMessage(data.error ?? "Failed to delete organization.");
@@ -569,8 +591,8 @@ export default function OrganizationsContent() {
 			}
 			setExpandedOrgId(null);
 			await fetchOrganizations(includePastOpportunities);
-		} catch {
-			setSubmitMessage("Network error.");
+		} catch (e) {
+			setSubmitMessage(e instanceof Error ? e.message : "Network error.");
 			setSubmitStatus("error");
 		} finally {
 			setDeletingOrgId(null);
@@ -745,6 +767,11 @@ export default function OrganizationsContent() {
 									setPhotoUploadStatus("error");
 									return;
 								}
+								if (enabled && !canAddContent) {
+									setPhotoUploadMessage("Please complete the human verification above before uploading.");
+									setPhotoUploadStatus("error");
+									return;
+								}
 								setPhotoUploadStatus("loading");
 								setPhotoUploadMessage("");
 								try {
@@ -754,6 +781,7 @@ export default function OrganizationsContent() {
 									formData.set("file", toUpload);
 									const res = await fetch("/api/upload-organization-photo", {
 										method: "POST",
+										credentials: "same-origin",
 										body: formData,
 									});
 									const data = (await res.json()) as { url?: string; error?: string };
@@ -1506,5 +1534,13 @@ export default function OrganizationsContent() {
 				label={calendarModal?.label ?? ""}
 			/>
 		</div>
+	);
+}
+
+export default function OrganizationsContent() {
+	return (
+		<HumanVerificationProvider showAddGate>
+			<OrganizationsContentInner />
+		</HumanVerificationProvider>
 	);
 }

@@ -23,6 +23,7 @@ import type {
 	OrganizationResource,
 	VolunteerOpportunity,
 } from "@/lib/types";
+import { requireAddHumanSession } from "@/lib/humanVerify";
 import { NextRequest, NextResponse } from "next/server";
 
 const MILES_TO_KM = 1.60934;
@@ -336,6 +337,8 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
 	try {
+		const humanBlock = requireAddHumanSession(request);
+		if (humanBlock) return humanBlock;
 		const body = (await request.json()) as Record<string, unknown>;
 		const name = typeof body.name === "string" ? body.name.trim() : "";
 		if (!name) {

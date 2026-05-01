@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import CalendarModal, { isIcalOrWebcalLink } from "@/components/CalendarModal";
+import { HumanVerificationProvider, useHumanVerification } from "@/components/HumanVerificationProvider";
 import { formatDateTime, toIsoDatetimeWithOffset, getCurrentOffsetMinutes, getTimezoneOptions } from "@/lib/format";
 import type { OrganizationWithVolunteerOpportunities } from "@/lib/types";
 
@@ -26,7 +27,8 @@ interface FormOptions {
 	volunteerRoleTypes?: VolunteerRoleTypeOption[];
 }
 
-export default function OrganizationDetail({ slug }: { slug: string }) {
+function OrganizationDetailInner({ slug }: { slug: string }) {
+	const { canAddContent, enabled } = useHumanVerification();
 	const [org, setOrg] = useState<OrganizationWithVolunteerOpportunities | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -141,6 +143,11 @@ export default function OrganizationDetail({ slug }: { slug: string }) {
 			setAddCalStatus("error");
 			return;
 		}
+		if (enabled && !canAddContent) {
+			setAddCalMessage("Please complete the human verification above first.");
+			setAddCalStatus("error");
+			return;
+		}
 		setAddCalStatus("loading");
 		setAddCalMessage("");
 		try {
@@ -170,6 +177,11 @@ export default function OrganizationDetail({ slug }: { slug: string }) {
 		e.preventDefault();
 		if (!org || !addVoTitle.trim()) {
 			setAddVoMessage("Title is required.");
+			setAddVoStatus("error");
+			return;
+		}
+		if (enabled && !canAddContent) {
+			setAddVoMessage("Please complete the human verification above first.");
 			setAddVoStatus("error");
 			return;
 		}
@@ -248,6 +260,11 @@ export default function OrganizationDetail({ slug }: { slug: string }) {
 			setAddResStatus("error");
 			return;
 		}
+		if (enabled && !canAddContent) {
+			setAddResMessage("Please complete the human verification above first.");
+			setAddResStatus("error");
+			return;
+		}
 		setAddResStatus("loading");
 		setAddResMessage("");
 		try {
@@ -291,6 +308,11 @@ export default function OrganizationDetail({ slug }: { slug: string }) {
 		}
 		if (!addContactPurpose.trim()) {
 			setAddContactMessage("Contact purpose (what to contact about) is required.");
+			setAddContactStatus("error");
+			return;
+		}
+		if (enabled && !canAddContent) {
+			setAddContactMessage("Please complete the human verification above first.");
 			setAddContactStatus("error");
 			return;
 		}
@@ -924,5 +946,13 @@ export default function OrganizationDetail({ slug }: { slug: string }) {
 			label={calendarModal?.label ?? ""}
 		/>
 		</>
+	);
+}
+
+export default function OrganizationDetail({ slug }: { slug: string }) {
+	return (
+		<HumanVerificationProvider showAddGate>
+			<OrganizationDetailInner slug={slug} />
+		</HumanVerificationProvider>
 	);
 }

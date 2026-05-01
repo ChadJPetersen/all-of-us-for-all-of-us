@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import { HumanVerificationProvider, useHumanVerification } from "@/components/HumanVerificationProvider";
 import { VirtualizedInfiniteList } from "@/components/VirtualizedInfiniteList";
 import { DEFAULT_PAGE_SIZE } from "@/lib/pagination";
 
@@ -29,7 +30,8 @@ interface ResourceTypeOption {
 	label: string;
 }
 
-export default function ResourcesContent() {
+function ResourcesContentInner() {
+	const { deleteWithVerification } = useHumanVerification();
 	const [resources, setResources] = useState<ResourceItem[]>([]);
 	const [totalCount, setTotalCount] = useState(0);
 	const [resourceTypes, setResourceTypes] = useState<ResourceTypeOption[]>([]);
@@ -68,7 +70,7 @@ export default function ResourcesContent() {
 		if (deletingId != null) return;
 		setDeletingId(id);
 		try {
-			const res = await fetch(`/api/resources/${id}`, { method: "DELETE" });
+			const res = await deleteWithVerification(`/api/resources/${id}`);
 			if (!res.ok) {
 				const data = (await res.json()) as { error?: string };
 				alert(data.error ?? "Failed to delete resource.");
@@ -76,6 +78,8 @@ export default function ResourcesContent() {
 			}
 			setResources((prev) => prev.filter((r) => r.id !== id));
 			setTotalCount((c) => Math.max(0, c - 1));
+		} catch (e) {
+			alert(e instanceof Error ? e.message : "Could not complete verification.");
 		} finally {
 			setDeletingId(null);
 		}
@@ -217,5 +221,13 @@ export default function ResourcesContent() {
 				)}
 			</section>
 		</div>
+	);
+}
+
+export default function ResourcesContent() {
+	return (
+		<HumanVerificationProvider showAddGate={false}>
+			<ResourcesContentInner />
+		</HumanVerificationProvider>
 	);
 }

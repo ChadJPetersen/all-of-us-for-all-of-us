@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import { HumanVerificationProvider, useHumanVerification } from "@/components/HumanVerificationProvider";
 import { VirtualizedInfiniteList } from "@/components/VirtualizedInfiniteList";
 import { formatDate, formatDateTime } from "@/lib/format";
 import { DEFAULT_PAGE_SIZE } from "@/lib/pagination";
@@ -15,13 +16,14 @@ interface VolunteerContentProps {
 	scheduleTypes?: { id: number; label: string; sort_order: number }[];
 }
 
-export default function VolunteerContent({
+function VolunteerContentInner({
 	initialScheduleTypeId,
 	initialDueBefore,
 	initialUpcoming,
 	initialSort,
 	scheduleTypes = [],
 }: VolunteerContentProps) {
+	const { deleteWithVerification } = useHumanVerification();
 	const [opportunities, setOpportunities] = useState<VolunteerOpportunityWithOrg[]>([]);
 	const [totalCount, setTotalCount] = useState(0);
 	const [loading, setLoading] = useState(true);
@@ -88,7 +90,7 @@ export default function VolunteerContent({
 		if (deletingId != null) return;
 		setDeletingId(id);
 		try {
-			const res = await fetch(`/api/volunteer-opportunities/${id}`, { method: "DELETE" });
+			const res = await deleteWithVerification(`/api/volunteer-opportunities/${id}`);
 			if (!res.ok) {
 				const data = (await res.json()) as { error?: string };
 				alert(data.error ?? "Failed to delete opportunity.");
@@ -96,6 +98,8 @@ export default function VolunteerContent({
 			}
 			setOpportunities((prev) => prev.filter((o) => o.id !== id));
 			setTotalCount((c) => Math.max(0, c - 1));
+		} catch (e) {
+			alert(e instanceof Error ? e.message : "Could not complete verification.");
 		} finally {
 			setDeletingId(null);
 		}
@@ -276,5 +280,13 @@ export default function VolunteerContent({
 				)}
 			</main>
 		</div>
+	);
+}
+
+export default function VolunteerContent(props: VolunteerContentProps) {
+	return (
+		<HumanVerificationProvider showAddGate={false}>
+			<VolunteerContentInner {...props} />
+		</HumanVerificationProvider>
 	);
 }

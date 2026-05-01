@@ -3,6 +3,7 @@ import {
 	requirePositiveInt,
 	requireUrl,
 } from "@/lib/validation";
+import { requireAddHumanSession } from "@/lib/humanVerify";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -12,6 +13,8 @@ import { NextRequest, NextResponse } from "next/server";
  */
 export async function POST(request: NextRequest) {
 	try {
+		const humanBlock = requireAddHumanSession(request);
+		if (humanBlock) return humanBlock;
 		const body = (await request.json()) as Record<string, unknown>;
 		const orgIdResult = requirePositiveInt(body, "organization_id", "Valid organization_id is required");
 		if (orgIdResult.errorResponse) return orgIdResult.errorResponse;
